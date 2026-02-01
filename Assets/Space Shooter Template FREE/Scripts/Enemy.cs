@@ -1,67 +1,83 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
-/// This script defines 'Enemy's' health and behavior. 
+/// Script quản lý máu và hành vi của Kẻ địch (Enemy).
 /// </summary>
-public class Enemy : MonoBehaviour {
-
+public class Enemy : MonoBehaviour 
+{
     #region FIELDS
-    [Tooltip("Health points in integer")]
-    public int health;
+    [Header("Thông số máu")]
+    [Tooltip("Số lượng máu của kẻ địch")]
+    public int health = 1;
 
-    [Tooltip("Enemy's projectile prefab")]
-    public GameObject Projectile;
-
-    [Tooltip("VFX prefab generating after destruction")]
+    [Header("Hiệu ứng & Đạn")]
+    [Tooltip("Prefab đạn của kẻ địch")]
+    public GameObject projectilePrefab;
+    [Tooltip("Hiệu ứng khi bị tiêu diệt")]
     public GameObject destructionVFX;
+    [Tooltip("Hiệu ứng khi bị trúng đạn")]
     public GameObject hitEffect;
     
-    [HideInInspector] public int shotChance; //probability of 'Enemy's' shooting during tha path
-    [HideInInspector] public float shotTimeMin, shotTimeMax; //max and min time for shooting from the beginning of the path
+    [HideInInspector] public int shotChance; 
+    [HideInInspector] public float shotTimeMin, shotTimeMax; 
     #endregion
 
     private void Start()
     {
+        // Lập lịch bắn đạn trong khoảng thời gian ngẫu nhiên
         Invoke("ActivateShooting", Random.Range(shotTimeMin, shotTimeMax));
     }
 
-    //coroutine making a shot
     void ActivateShooting() 
     {
-        if (Random.value < (float)shotChance / 100)                             //if random value less than shot probability, making a shot
-        {                         
-            Instantiate(Projectile,  gameObject.transform.position, Quaternion.identity);             
+        // Kiểm tra tỉ lệ bắn
+        if (Random.value < (float)shotChance / 100f) 
+        {                        
+            if (projectilePrefab != null)
+                Instantiate(projectilePrefab, transform.position, Quaternion.identity);             
         }
     }
 
-    //method of getting damage for the 'Enemy'
     public void GetDamage(int damage) 
     {
-        health -= damage;           //reducing health for damage value, if health is less than 0, starting destruction procedure
+        health -= damage;
+        
         if (health <= 0)
+        {
             Destruction();
-        else
-            Instantiate(hitEffect,transform.position,Quaternion.identity,transform);
+        }
+        else if (hitEffect != null)
+        {
+            // Tạo hiệu ứng trúng đạn và làm nó thành con của Enemy để di chuyển theo Enemy
+            Instantiate(hitEffect, transform.position, Quaternion.identity, transform);
+        }
     }    
 
-    //if 'Enemy' collides 'Player', 'Player' gets the damage equal to projectile's damage value
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Player")
+        // Sử dụng CompareTag để tối ưu hiệu suất hơn so với == tag
+        if (collision.CompareTag("Player"))
         {
-            if (Projectile.GetComponent<Projectile>() != null)
-                Player.instance.GetDamage(Projectile.GetComponent<Projectile>().damage);
-            else
-                Player.instance.GetDamage(1);
+            if (Player.instance != null)
+            {
+                // Lấy component Projectile một lần để kiểm tra damage
+                // Lưu ý: Nên cache damage này nếu dùng thường xuyên
+                var projectileScript = projectilePrefab?.GetComponent<Projectile>();
+                int damageToDeal = (projectileScript != null) ? projectileScript.damage : 1;
+                
+                Player.instance.GetDamage(damageToDeal);
+            }
+            
+            // Tùy chọn: Enemy có thể chết luôn khi đâm vào Player
+            // Destruction(); 
         }
     }
 
-    //method of destroying the 'Enemy'
     void Destruction()                           
     {        
-        Instantiate(destructionVFX, transform.position, Quaternion.identity); 
+        if (destructionVFX != null)
+            Instantiate(destructionVFX, transform.position, Quaternion.identity); 
+
         Destroy(gameObject);
     }
 }

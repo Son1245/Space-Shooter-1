@@ -1,18 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-/// <summary>
-/// This script moves the attached object along the Y-axis with the defined speed
-/// </summary>
-public class DirectMoving : MonoBehaviour {
+public class DirectMoving : MonoBehaviour 
+{
+    [Tooltip("Tốc độ di chuyển theo trục Y (Số dương là đi lên, số âm là đi xuống)")]
+    public float speed = 5f;
 
-    [Tooltip("Moving speed on Y axis in local space")]
-    public float speed;
-
-    //moving the object with the defined speed
-    private void Update()
+    void Update()
     {
-        transform.Translate(Vector3.up * speed * Time.deltaTime); 
+        // Di chuyển đối tượng dựa trên Vector3.up (0, 1, 0)
+        // Space.Self đảm bảo vật thể di chuyển theo hướng "lên trên" của chính nó (Local Space)
+        transform.Translate(Vector3.up * speed * Time.deltaTime, Space.Self); 
     }
 }

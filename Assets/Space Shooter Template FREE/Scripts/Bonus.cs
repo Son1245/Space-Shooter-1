@@ -1,16 +1,24 @@
 ﻿using UnityEngine;
 
-public class Bonus : MonoBehaviour {
-
-    //when colliding with another object, if another objct is 'Player', sending command to the 'Player'
+public class Bonus : MonoBehaviour 
+{
+    // Khi va chạm với vật thể khác (dạng Trigger 2D)
     private void OnTriggerEnter2D(Collider2D collision) 
     {
-        if (collision.tag == "Player") 
+        // Kiểm tra xem vật thể va chạm có Tag là "Player" không
+        if (collision.CompareTag("Player")) 
         {
-            if (PlayerShooting.instance.weaponPower < PlayerShooting.instance.maxweaponPower)
+            // Kiểm tra xem Instance có tồn tại không trước khi truy cập
+            if (PlayerShooting.instance != null)
             {
-                PlayerShooting.instance.weaponPower++;
+                if (PlayerShooting.instance.weaponPower < PlayerShooting.instance.maxWeaponPower)
+                {
+                    PlayerShooting.instance.weaponPower++;
+                    Debug.Log("Đã tăng sức mạnh vũ khí lên: " + PlayerShooting.instance.weaponPower);
+                }
             }
+            
+            // Hủy vật phẩm Bonus sau khi ăn
             Destroy(gameObject);
         }
     }

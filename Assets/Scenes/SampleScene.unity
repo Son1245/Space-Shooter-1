@@ -923,12 +923,20 @@ PrefabInstance:
       value: Purple-Planet-wih-Moon (1)
       objectReference: {fileID: 0}
     - target: {fileID: 4300159700785244, guid: c1ae0b8d643fbea439d40b05d4acd750, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.4960379
+      objectReference: {fileID: 0}
+    - target: {fileID: 4300159700785244, guid: c1ae0b8d643fbea439d40b05d4acd750, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.43923846
+      objectReference: {fileID: 0}
+    - target: {fileID: 4300159700785244, guid: c1ae0b8d643fbea439d40b05d4acd750, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 6.38
+      value: 6.2345
       objectReference: {fileID: 0}
     - target: {fileID: 4300159700785244, guid: c1ae0b8d643fbea439d40b05d4acd750, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.71
+      value: 5.1464
       objectReference: {fileID: 0}
     - target: {fileID: 4300159700785244, guid: c1ae0b8d643fbea439d40b05d4acd750, type: 3}
       propertyPath: m_LocalPosition.z
