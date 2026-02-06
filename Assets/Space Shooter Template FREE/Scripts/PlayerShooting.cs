@@ -3,37 +3,44 @@
 public class PlayerShooting : MonoBehaviour
 {
     [Header("Cấu hình đạn")]
-    public GameObject bulletPrefab; // Đổi thành số ít cho đúng ngữ pháp
-    public Transform firePoint;     // Điểm nòng súng (nếu bạn muốn đạn bay ra từ nòng súng thay vì giữa người)
-    
-    [Header("Thông số bắn")]
-    public float shootingInterval = 0.2f; 
-    private float nextFireTime; // Dùng cách này sẽ gọn hơn lastBulletTime
+    public GameObject bulletPrefab;
+    public Transform firePoint;
 
-    void Update()
+    [Header("Thông số bắn")]
+    public float shootingInterval = 0.2f;
+    private float nextFireTime;
+
+    [Header("Nâng cấp vũ khí")]
+    public int weaponPower = 1;        // Cấp vũ khí hiện tại
+    public int maxWeaponPower = 5;     // Cấp tối đa
+
+    private void Update()
     {
-        // Sử dụng GetButton thay vì GetMouseButton giúp bạn dễ dàng đổi phím trong Input Manager sau này
         if (Input.GetButton("Fire1") && Time.time >= nextFireTime)
         {
-            ShootBullet();
-            // Thiết lập thời điểm tiếp theo được phép bắn
+            Shoot();
             nextFireTime = Time.time + shootingInterval;
         }
     }
 
-    private void ShootBullet()
+    private void Shoot()
     {
-        if (bulletPrefab != null)
+        if (bulletPrefab == null)
         {
-            // Nếu có điểm nòng súng (firePoint) thì bắn từ đó, không thì bắn từ vị trí Player
-            Vector3 spawnPosition = firePoint != null ? firePoint.position : transform.position;
-            Quaternion spawnRotation = firePoint != null ? firePoint.rotation : transform.rotation;
-
-            Instantiate(bulletPrefab, spawnPosition, spawnRotation);
+            Debug.LogError("LỖI: Chưa gán Bullet Prefab!");
+            return;
         }
-        else
+
+        Vector3 spawnPos = firePoint != null ? firePoint.position : transform.position;
+        Quaternion spawnRot = firePoint != null ? firePoint.rotation : transform.rotation;
+
+        // Bắn theo cấp vũ khí
+        for (int i = 0; i < weaponPower; i++)
         {
-            Debug.LogError("LỖI: Bạn chưa kéo Bullet Prefab vào ô trống trong Inspector!");
+            float angleOffset = (i - (weaponPower - 1) / 2f) * 10f;
+            Quaternion rotation = spawnRot * Quaternion.Euler(0, 0, angleOffset);
+
+            Instantiate(bulletPrefab, spawnPos, rotation);
         }
     }
 }
